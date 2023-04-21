@@ -1,4 +1,10 @@
+github.com/aws/aws-lambda-go v1.40.0 h1:6dKcDpXsTpapfCFF6Debng6CiV/Z3sNHekM6bwhI2J0=
+github.com/aws/aws-lambda-go v1.40.0/go.mod h1:jwFe2KmMsHmffA1X2R09hH6lFzJQxzI8qK17ewzbQMM=
+github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/dscottboggs/attest v1.4.0 h1:rpnR4aNCIxNtZSE0/6pFvSYSE0LGb6HAMhzQreha3DA=
 github.com/dscottboggs/attest v1.4.0/go.mod h1:nc4s94fLA/w2fG/aIVZqwSBa19PKayaKaoWKiCX6kJ0=
 github.com/mborgerson/gotruncatehtml v0.0.0-20150507032438-125d9154cd1e h1:WAvCE+oeNmtcmocFzaWuFaAPAtQTgjMRwhVMFNpSegI=
 github.com/mborgerson/gotruncatehtml v0.0.0-20150507032438-125d9154cd1e/go.mod h1:S6BbrBXyRAdglUgGWhSkTV9Krk3VKLmS2leGpwMJ8GQ=
+github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
+github.com/stretchr/testify v1.7.2 h1:4jaiDzPyXQvSd7D0EjG45355tLlV3VOECpq10pLC+8s=
+gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
