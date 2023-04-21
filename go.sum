@@ -1,0 +1,4 @@
+github.com/dscottboggs/attest v1.4.0 h1:rpnR4aNCIxNtZSE0/6pFvSYSE0LGb6HAMhzQreha3DA=
+github.com/dscottboggs/attest v1.4.0/go.mod h1:nc4s94fLA/w2fG/aIVZqwSBa19PKayaKaoWKiCX6kJ0=
+github.com/mborgerson/gotruncatehtml v0.0.0-20150507032438-125d9154cd1e h1:WAvCE+oeNmtcmocFzaWuFaAPAtQTgjMRwhVMFNpSegI=
+github.com/mborgerson/gotruncatehtml v0.0.0-20150507032438-125d9154cd1e/go.mod h1:S6BbrBXyRAdglUgGWhSkTV9Krk3VKLmS2leGpwMJ8GQ=
