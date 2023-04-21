@@ -9,19 +9,9 @@ import (
 	"os"
 	"strconv"
 	"time"
-
-	"github.com/aws/aws-lambda-go/events"
 )
 
 var BASEROW_API_KEY string
-
-func InternalServerError(message string, err error) *events.APIGatewayProxyResponse {
-	fmt.Printf("error %s: %v\n", message, err)
-	return &events.APIGatewayProxyResponse{
-		StatusCode: 500,
-		Body:       `{"error": "internal server error"}`,
-	}
-}
 
 func init() {
 	for _, arg := range os.Args {
