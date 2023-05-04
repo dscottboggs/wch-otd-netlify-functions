@@ -52,7 +52,7 @@ func FetchForDate(date time.Time, tz *time.Location) ([]OurResponse, error) {
 	headers.Set("Authorization", fmt.Sprintf("Token %s", BASEROW_API_KEY))
 	headers.Set("Accept", "application/json")
 	client := http.Client{
-		// Netlify enforces a 10-second max run time, so.BASEROW_API_KEY..
+		// Netlify enforces a 10-second max run time, so...
 		Timeout: 9 * time.Second,
 	}
 	request := http.Request{
