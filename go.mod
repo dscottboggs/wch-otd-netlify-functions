@@ -1,4 +1,4 @@
-module github.com/dscottboggs/wch-otd-netlify-functions
+module github.com/wrkclasshistory/OtD_API
 
 go 1.20
 
