@@ -2,9 +2,13 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * This file contains the high-level functions for querying the API which are
+ * called directly by the netlify function scripts. They wrap up the whole
+ * process of querying the database and transforming the results.
  */
 
-package wch_otd_netlify_functions
+package wch_otd_api
 
 import (
 	"encoding/json"

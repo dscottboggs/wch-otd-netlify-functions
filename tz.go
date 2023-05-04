@@ -4,7 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package wch_otd_netlify_functions
+package wch_otd_api
 
 import (
 	"regexp"

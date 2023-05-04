@@ -2,9 +2,12 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * This file contains the data structures for deserializing database results and
+ * serializing API responses, and their associated methods.
  */
 
-package wch_otd_netlify_functions
+package wch_otd_api
 
 import (
 	"fmt"
@@ -14,10 +17,15 @@ import (
 	"github.com/mborgerson/gotruncatehtml/truncatehtml"
 )
 
+// The response format from the Baserow API
 type DbResponse struct {
 	Count   uint            `json:"count"`
 	Results []DbResponseRow `json:"results"`
 }
+
+// The relevant data from a "row" in the database, as returned by the Baserow
+// API. Please note that many fields are omitted, and we may have a use in the
+// future for those omitted fields.
 type DbResponseRow struct {
 	ID           int    `json:"id"`
 	Title        string `json:"title"`
@@ -32,17 +40,22 @@ type DbResponseRow struct {
 	AuthorEmail  string `json:"author_email"`
 }
 
+// Transforms the title into the format used as a part of the URL to the full
+// article.
 func (r *DbResponseRow) UrlEncodedTitle() string {
 	return url.QueryEscape(strings.ToLower(strings.ReplaceAll(r.Title, " ", "-")))
 }
 
+// Return the fully constructed URL which points to the full article in the
+// Stories app.
 func (r *DbResponseRow) ArticleUrl() (*url.URL, error) {
 	return url.Parse(fmt.Sprintf("https://stories.workingclasshistory.com/article/%v/%s", r.ID, r.UrlEncodedTitle()))
 }
 
 // Return the first 500 visible characters of the HTML content, preserving tags.
 //
-// Return an error if invalid HTML is encountered
+// Return an error if invalid HTML is encountered (that is, if a closing tag
+// was encountered which had not been open, like "<p></p></p>", see test)
 func (r *DbResponseRow) Excerpt() (string, error) {
 	summary, err := truncatehtml.TruncateHtml([]byte(r.Description), 500, "...")
 	if err != nil {
@@ -51,6 +64,9 @@ func (r *DbResponseRow) Excerpt() (string, error) {
 	return string(summary), err
 }
 
+// Return the API-response formatted data about this row in the database.
+//
+// Returns an error if there is a problem constructing the URL or excerpt.
 func (r *DbResponseRow) Transform() (*OurResponse, error) {
 	var (
 		excerpt, err = r.Excerpt()
@@ -91,12 +107,14 @@ func (r *DbResponseRow) Transform() (*OurResponse, error) {
 	}, nil
 }
 
+// Metadata for media attached to this event.
 type MediaInfo struct {
 	Url     string `json:"url"`
 	Credit  string `json:"credit"`
 	Caption string `json:"caption"`
 }
 
+// The format of a single historical event as output by the API
 type OurResponse struct {
 	Title    string `json:"title"`
 	Content  string `json:"content"`
@@ -111,6 +129,8 @@ type OurResponse struct {
 	Media *MediaInfo `json:"media"`
 }
 
+// Transform a full response from the database into a list of rows in our
+// chosen format.
 func (r DbResponse) Transform() ([]OurResponse, error) {
 	result := make([]OurResponse, 0, r.Count)
 	for _, row := range r.Results {
