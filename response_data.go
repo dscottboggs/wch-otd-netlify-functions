@@ -11,11 +11,32 @@ package wch_otd_api
 
 import (
 	"fmt"
+	"log"
 	"net/url"
+	"os"
+	"strconv"
 	"strings"
 
 	"github.com/mborgerson/gotruncatehtml/truncatehtml"
 )
+
+// How many characters the excerpt should be at most
+var EXCERPT_MAX_CHARS int
+
+func init() {
+	if maxChars, found := os.LookupEnv("API_EXCERPT_MAX_CHARS"); found {
+		var err error
+		EXCERPT_MAX_CHARS, err = strconv.Atoi(maxChars)
+		if err != nil {
+			log.Panicf("invalid value for $API_EXERPT_MAX_CHARS \"%s\": %v", maxChars, err)
+		}
+	} else if EXCERPT_MAX_CHARS < 0 {
+		log.Panicf("invalid value for $API_EXERPT_MAX_CHARS \"%s\": length cannot be less than zero", maxChars)
+	} else {
+		// Default
+		EXCERPT_MAX_CHARS = 250
+	}
+}
 
 // The response format from the Baserow API
 type DbResponse struct {
@@ -57,7 +78,7 @@ func (r *DbResponseRow) ArticleUrl() (*url.URL, error) {
 // Return an error if invalid HTML is encountered (that is, if a closing tag
 // was encountered which had not been open, like "<p></p></p>", see test)
 func (r *DbResponseRow) Excerpt() (string, error) {
-	summary, err := truncatehtml.TruncateHtml([]byte(r.Description), 500, "...")
+	summary, err := truncatehtml.TruncateHtml([]byte(r.Description), EXCERPT_MAX_CHARS, "...")
 	if err != nil {
 		return "", err
 	}
