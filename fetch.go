@@ -36,7 +36,7 @@ func init() {
 		log.Fatalln("REACT_APP_BASEROW_TOKEN environment variable not found")
 	}
 }
-func makeUrl(date time.Time) *url.URL {
+func makeUrl(date *time.Time) *url.URL {
 	query := url.Values{}
 	query.Set("filter__field_177140__equal", strconv.Itoa(date.Day()))
 	query.Set("filter__field_177139__equal", strconv.Itoa(int(date.Month())))
@@ -47,39 +47,46 @@ func makeUrl(date time.Time) *url.URL {
 	return it
 }
 
-func FetchForDate(date time.Time, tz *time.Location) ([]OurResponse, error) {
+func FetchForDate(date time.Time, tz *time.Location) (string, error) {
 	if tz == nil {
 		tz = time.UTC
 	}
 	date = date.In(tz)
-	headers := http.Header{}
-	headers.Set("Authorization", fmt.Sprintf("Token %s", BASEROW_API_KEY))
-	headers.Set("Accept", "application/json")
-	client := http.Client{
-		// Netlify enforces a 10-second max run time, so...
-		Timeout: 9 * time.Second,
-	}
-	request := http.Request{
-		Method: "GET",
-		URL:    makeUrl(date),
-		Header: headers,
-	}
-	result, err := client.Do(&request)
+	cache, err := connectToCache()
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	if result.StatusCode == 200 {
-		var dbResponse DbResponse
-		err = json.NewDecoder(result.Body).Decode(&dbResponse)
+	return cache.getDayOr(&date, func(date *time.Time) ([]OurResponse, error) {
+
+		headers := http.Header{}
+		headers.Set("Authorization", fmt.Sprintf("Token %s", BASEROW_API_KEY))
+		headers.Set("Accept", "application/json")
+		client := http.Client{
+			// Netlify enforces a 10-second max run time, so...
+			Timeout: 9 * time.Second,
+		}
+		request := http.Request{
+			Method: "GET",
+			URL:    makeUrl(date),
+			Header: headers,
+		}
+		result, err := client.Do(&request)
 		if err != nil {
 			return nil, err
 		}
-		return dbResponse.Transform()
-	} else {
-		return nil, fmt.Errorf("database request failed: %s", result.Status)
-	}
+		if result.StatusCode == 200 {
+			var dbResponse DbResponse
+			err = json.NewDecoder(result.Body).Decode(&dbResponse)
+			if err != nil {
+				return nil, err
+			}
+			return dbResponse.Transform()
+		} else {
+			return nil, fmt.Errorf("database request failed: %s", result.Status)
+		}
+	})
 }
 
-func FetchToday(tz *time.Location) ([]OurResponse, error) {
+func FetchToday(tz *time.Location) (string, error) {
 	return FetchForDate(time.Now(), tz)
 }
