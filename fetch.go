@@ -47,14 +47,14 @@ func makeUrl(date *time.Time) *url.URL {
 	return it
 }
 
-func FetchForDate(date time.Time, tz *time.Location) (string, error) {
+func FetchForDate(date time.Time, tz *time.Location) ([]OurResponse, error) {
 	if tz == nil {
 		tz = time.UTC
 	}
 	date = date.In(tz)
 	cache, err := connectToCache()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	return cache.getDayOr(&date, func(date *time.Time) ([]OurResponse, error) {
 
@@ -87,6 +87,6 @@ func FetchForDate(date time.Time, tz *time.Location) (string, error) {
 	})
 }
 
-func FetchToday(tz *time.Location) (string, error) {
+func FetchToday(tz *time.Location) ([]OurResponse, error) {
 	return FetchForDate(time.Now(), tz)
 }

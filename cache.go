@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -51,7 +52,7 @@ func keyForDay(date *time.Time) string {
 }
 
 // Store the given day's database result data in the cache for 48 hours in the cache for 48 hours
-func (c *cache) setForDay(data []OurResponse, day *time.Time) (string, error) {
+func (c *cache) setForDay(data []OurResponse, day *time.Time) ([]OurResponse, error) {
 	var (
 		key   = keyForDay(day)
 		buf   = new(bytes.Buffer)
@@ -59,32 +60,41 @@ func (c *cache) setForDay(data []OurResponse, day *time.Time) (string, error) {
 		value string
 	)
 	if err != nil {
-		return "", err
+		return data, err
 	}
 	value = buf.String()
-	return value, c.client.Set(c.ctx, key, value, 48*time.Hour).Err()
+	return data, c.client.Set(c.ctx, key, value, 48*time.Hour).Err()
 }
 
 // Return the given day's data from the redis cache, if present. Returns
 // redis.Nil if not found.
-func (c cache) getDay(day *time.Time) (string, error) {
-	key := keyForDay(day)
-	return c.client.Get(c.ctx, key).Result()
+func (c cache) getDay(day *time.Time) ([]OurResponse, error) {
+	var (
+		data      = make([]OurResponse, 0)
+		key       = keyForDay(day)
+		text, err = c.client.Get(c.ctx, key).Result()
+		reader    = strings.NewReader(text)
+	)
+	if err != nil {
+		return nil, err
+	}
+	err = json.NewDecoder(reader).Decode(&data)
+	return data, err
 }
 
 // Return the given day's cached data, or call fetchFunc to get it, caching the
 // result before returning it, serialized.
-func (c cache) getDayOr(day *time.Time, fetchFunc func(*time.Time) ([]OurResponse, error)) (string, error) {
+func (c cache) getDayOr(day *time.Time, fetchFunc func(*time.Time) ([]OurResponse, error)) ([]OurResponse, error) {
 	result, err := c.getDay(day)
 	if err == redis.Nil {
 		// fetch from the database and cache the result
 		data, err := fetchFunc(day)
 		if err != nil {
-			return "", err
+			return data, err
 		}
 		return c.setForDay(data, day)
 	} else if err != nil {
-		return "", err
+		return nil, err
 	} else {
 		// cache result found
 		return result, nil
