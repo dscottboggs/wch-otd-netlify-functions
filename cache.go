@@ -27,6 +27,7 @@ func connectToCache() (*cache, error) {
 	var (
 		loc, locFound         = os.LookupEnv("API_CACHE_LOCATION")
 		pass                  = os.Getenv("API_CACHE_PASSWORD")
+		username              = os.Getenv("API_CACHE_USERNAME")
 		dbAsText, dbFound     = os.LookupEnv("API_CACHE_DB")
 		db                int = 0
 		err               error
@@ -42,7 +43,7 @@ func connectToCache() (*cache, error) {
 	}
 	return &cache{
 		ctx:    context.Background(),
-		client: redis.NewClient(&redis.Options{Addr: loc, Password: pass, DB: db}),
+		client: redis.NewClient(&redis.Options{Addr: loc, Password: pass, DB: db, Username: username}),
 	}, nil
 }
 
