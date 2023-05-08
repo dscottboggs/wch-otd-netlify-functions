@@ -47,46 +47,49 @@ func makeUrl(date *time.Time) *url.URL {
 	return it
 }
 
-func FetchForDate(date time.Time, tz *time.Location) ([]OurResponse, error) {
+func fetchFromDB(date *time.Time) ([]OurResponse, error) {
+	headers := http.Header{}
+	headers.Set("Authorization", fmt.Sprintf("Token %s", BASEROW_API_KEY))
+	headers.Set("Accept", "application/json")
+	client := http.Client{
+		// Netlify enforces a 10-second max run time, so...
+		Timeout: 9 * time.Second,
+	}
+	request := http.Request{
+		Method: "GET",
+		URL:    makeUrl(date),
+		Header: headers,
+	}
+	result, err := client.Do(&request)
+	if err != nil {
+		return nil, err
+	}
+	if result.StatusCode == 200 {
+		var dbResponse DbResponse
+		err = json.NewDecoder(result.Body).Decode(&dbResponse)
+		if err != nil {
+			return nil, err
+		}
+		return dbResponse.Transform()
+	} else {
+		return nil, fmt.Errorf("database request failed: %s", result.Status)
+	}
+}
+
+func FetchForDate(date time.Time, tz *time.Location) ([]OurResponse, error, error) {
 	if tz == nil {
 		tz = time.UTC
 	}
 	date = date.In(tz)
 	cache, err := connectToCache()
 	if err != nil {
-		return nil, err
+		result, err2 := fetchFromDB(&date)
+		return result, err, err2
 	}
-	return cache.getDayOr(&date, func(date *time.Time) ([]OurResponse, error) {
-
-		headers := http.Header{}
-		headers.Set("Authorization", fmt.Sprintf("Token %s", BASEROW_API_KEY))
-		headers.Set("Accept", "application/json")
-		client := http.Client{
-			// Netlify enforces a 10-second max run time, so...
-			Timeout: 9 * time.Second,
-		}
-		request := http.Request{
-			Method: "GET",
-			URL:    makeUrl(date),
-			Header: headers,
-		}
-		result, err := client.Do(&request)
-		if err != nil {
-			return nil, err
-		}
-		if result.StatusCode == 200 {
-			var dbResponse DbResponse
-			err = json.NewDecoder(result.Body).Decode(&dbResponse)
-			if err != nil {
-				return nil, err
-			}
-			return dbResponse.Transform()
-		} else {
-			return nil, fmt.Errorf("database request failed: %s", result.Status)
-		}
-	})
+	result, err := cache.getDayOr(&date, fetchFromDB)
+	return result, nil, err
 }
 
-func FetchToday(tz *time.Location) ([]OurResponse, error) {
+func FetchToday(tz *time.Location) ([]OurResponse, error, error) {
 	return FetchForDate(time.Now(), tz)
 }

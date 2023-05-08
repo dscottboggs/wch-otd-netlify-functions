@@ -85,19 +85,23 @@ func (c cache) getDay(day *time.Time) ([]OurResponse, error) {
 
 // Return the given day's cached data, or call fetchFunc to get it, caching the
 // result before returning it, serialized.
-func (c cache) getDayOr(day *time.Time, fetchFunc func(*time.Time) ([]OurResponse, error)) ([]OurResponse, error) {
+func (c cache) getDayOr(
+	day *time.Time,
+	fetchFunc func(*time.Time) ([]OurResponse, error),
+) ([]OurResponse, error, error) {
 	result, err := c.getDay(day)
 	if err == redis.Nil {
 		// fetch from the database and cache the result
 		data, err := fetchFunc(day)
 		if err != nil {
-			return data, err
+			return data, nil, err
 		}
-		return c.setForDay(data, day)
+		r, err := c.setForDay(data, day)
+		return r, err, nil
 	} else if err != nil {
-		return nil, err
+		return nil, err, nil
 	} else {
 		// cache result found
-		return result, nil
+		return result, nil, nil
 	}
 }
