@@ -24,7 +24,7 @@ func TestExcerpt(t *testing.T) {
 	test := attest.New(t)
 	response := DbResponseRow{Description: testStr}
 	result := test.EatError(response.Excerpt())
-	test.Equals(result, `<p>On 17 April 1975, a wave of anti-fascist anger erupted in Milan following the murder of socialist activist, Claudio Varalli, by a fascist the day before.</p> <p>In the morning, a demonstration of 50,000 workers and students marched through the city centre, before splitting into two separate marches which confronted both police and fascists. The Milan headquarters of the fascist Italian Social Movement (MSI) was attacked and had to be defended by police who fired tear gas and, at one point, drove a truck into a group of protesters, killing 27-year-old anti-fascist teacher, Giannino Zibecchi.</p> <p>Att...</p>`)
+	test.Equals(result, `<p>On 17 April 1975, a wave of anti-fascist anger erupted in Milan following the murder of socialist activist, Claudio Varalli, by a fascist the day before.</p> <p>In the morning, a demonstration of 50,000 workers and students marched through the city centre, before splitting into two separate marches whic...</p>`)
 	response = DbResponseRow{Description: `<p>invalid html</p></p>`}
 	errResult, err := response.Excerpt()
 	test.Equals("", errResult)
@@ -62,11 +62,9 @@ func TestSerializeAndTransform(t *testing.T) {
 	test.Equals(response.Title, "Operation Red Snake of the Paraná")
 	test.Equals(response.Content, "On 20 March 1975, Operation Red Snake of the Paraná began in Argentina, when the government of Isabel Perón sent hundreds of police and troops into the town of Villa Constitución to break the organisation of militant industrial workers. They arrested 307 workers, but the working class fought back, going on strike and occupying their plants until the detainees were released. The occupations lasted until March 26 when they were forcibly broken up by police. Over the next two months the government continued to arrest, blacklist and kill workers in the name of fighting \"subversion\". This sort of repression is well-known under the military dictatorship but much less so under Peron, who had the support of most unions.")
 	test.Equals(response.MoreInfo, "")
-	test.Equals(response.Excerpt, "On 20 March 1975, Operation Red Snake of the Paraná began in Argentina, when the government of Isabel Perón sent hundreds of police and troops into the town of Villa Constitución to break the organisation of militant industrial workers. They arrested 307 workers, but the working class fought back, going on strike and occupying their plants until the detainees were released. The occupations lasted until March 26 when they were forcibly broken up by police. Over the next two months the government continued to arrest, blacklist and kill workers in the name of fighting \"subversion\". This sort o...")
+	test.Equals(response.Excerpt, "On 20 March 1975, Operation Red Snake of the Paraná began in Argentina, when the government of Isabel Perón sent hundreds of police and troops into the town of Villa Constitución to break the organisation of militant industrial workers. They arrested 307 workers, but the working class fought back,...")
 	test.NotNil(response.Author, "response Author was nil")
-	test.Equals(response.Author.Name, "Working Class History")
-	test.Equals(response.Author.Url, "https://workingclasshistory.com")
-	test.Equals(response.Author.Email, "")
+	test.Equals(response.Author, "Working Class History")
 	test.Equals(response.Url, "https://stories.workingclasshistory.com/article/9299/operation-red-snake-of-the-paran%C3%A1")
 	test.Attest(response.Media == nil, "media was not nil? %#+v", response.Media)
 }
