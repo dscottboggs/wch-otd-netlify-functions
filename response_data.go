@@ -57,8 +57,6 @@ type DbResponseRow struct {
 	MediaCredit  string `json:"media_credit"`
 	MediaCaption string `json:"media_caption"`
 	AuthorName   string `json:"author_name"`
-	AuthorURL    string `json:"author_url"`
-	AuthorEmail  string `json:"author_email"`
 }
 
 // Transforms the title into the format used as a part of the URL to the full
@@ -115,16 +113,8 @@ func (r *DbResponseRow) Transform() (*OurResponse, error) {
 		MoreInfo: r.MoreInfo,
 		Media:    media,
 		Excerpt:  excerpt,
-		Author: struct {
-			Name  string "json:\"name\""
-			Url   string "json:\"url\""
-			Email string "json:\"email\""
-		}{
-			Name:  r.AuthorName,
-			Url:   r.AuthorURL,
-			Email: r.AuthorEmail,
-		},
-		Url: articleUrl.String(),
+		Author:   r.AuthorName,
+		Url:      articleUrl.String(),
 	}, nil
 }
 
@@ -137,17 +127,13 @@ type MediaInfo struct {
 
 // The format of a single historical event as output by the API
 type OurResponse struct {
-	Title    string `json:"title"`
-	Content  string `json:"content"`
-	MoreInfo string `json:"more_info"`
-	Excerpt  string `json:"excerpt"`
-	Author   struct {
-		Name  string `json:"name"`
-		Url   string `json:"url"`
-		Email string `json:"email"`
-	} `json:"author"`
-	Url   string     `json:"url"`
-	Media *MediaInfo `json:"media"`
+	Title    string     `json:"title"`
+	Content  string     `json:"content"`
+	MoreInfo string     `json:"more_info"`
+	Excerpt  string     `json:"excerpt"`
+	Author   string     `json:"author"`
+	Url      string     `json:"url"`
+	Media    *MediaInfo `json:"media"`
 }
 
 // Transform a full response from the database into a list of rows in our
