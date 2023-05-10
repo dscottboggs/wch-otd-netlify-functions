@@ -47,7 +47,7 @@ func makeUrl(date *time.Time) *url.URL {
 	return it
 }
 
-func fetchFromDB(date *time.Time) ([]OurResponse, error) {
+func fetchFromDB(date *time.Time) (DaysData, error) {
 	headers := http.Header{}
 	headers.Set("Authorization", fmt.Sprintf("Token %s", BASEROW_API_KEY))
 	headers.Set("Accept", "application/json")
@@ -76,7 +76,7 @@ func fetchFromDB(date *time.Time) ([]OurResponse, error) {
 	}
 }
 
-func FetchForDate(date time.Time, tz *time.Location) ([]OurResponse, error, error) {
+func FetchForDate(date time.Time, tz *time.Location) (DaysData, error, error) {
 	if tz == nil {
 		tz = time.UTC
 	}
@@ -90,6 +90,6 @@ func FetchForDate(date time.Time, tz *time.Location) ([]OurResponse, error, erro
 	return result, nil, err
 }
 
-func FetchToday(tz *time.Location) ([]OurResponse, error, error) {
+func FetchToday(tz *time.Location) (DaysData, error, error) {
 	return FetchForDate(time.Now(), tz)
 }

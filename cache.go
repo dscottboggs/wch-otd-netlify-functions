@@ -53,7 +53,7 @@ func keyForDay(date *time.Time) string {
 }
 
 // Store the given day's database result data in the cache for 48 hours in the cache for 48 hours
-func (c *cache) setForDay(data []OurResponse, day *time.Time) ([]OurResponse, error) {
+func (c *cache) setForDay(data DaysData, day *time.Time) (DaysData, error) {
 	var (
 		key   = keyForDay(day)
 		buf   = new(bytes.Buffer)
@@ -69,9 +69,9 @@ func (c *cache) setForDay(data []OurResponse, day *time.Time) ([]OurResponse, er
 
 // Return the given day's data from the redis cache, if present. Returns
 // redis.Nil if not found.
-func (c cache) getDay(day *time.Time) ([]OurResponse, error) {
+func (c cache) getDay(day *time.Time) (DaysData, error) {
 	var (
-		data      = make([]OurResponse, 0)
+		data      = make(DaysData, 0)
 		key       = keyForDay(day)
 		text, err = c.client.Get(c.ctx, key).Result()
 		reader    = strings.NewReader(text)
@@ -87,8 +87,8 @@ func (c cache) getDay(day *time.Time) ([]OurResponse, error) {
 // result before returning it, serialized.
 func (c cache) getDayOr(
 	day *time.Time,
-	fetchFunc func(*time.Time) ([]OurResponse, error),
-) ([]OurResponse, error, error) {
+	fetchFunc func(*time.Time) (DaysData, error),
+) (DaysData, error, error) {
 	result, err := c.getDay(day)
 	if err == redis.Nil {
 		// fetch from the database and cache the result

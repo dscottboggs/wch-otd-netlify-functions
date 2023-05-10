@@ -10,6 +10,8 @@
 package wch_otd_api
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/url"
@@ -17,6 +19,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/mborgerson/gotruncatehtml/truncatehtml"
 )
 
@@ -138,8 +141,8 @@ type OurResponse struct {
 
 // Transform a full response from the database into a list of rows in our
 // chosen format.
-func (r DbResponse) Transform() ([]OurResponse, error) {
-	result := make([]OurResponse, 0, r.Count)
+func (r DbResponse) Transform() (DaysData, error) {
+	result := make(DaysData, 0, r.Count)
 	for _, row := range r.Results {
 		transformed, err := row.Transform()
 		if err != nil {
@@ -148,4 +151,25 @@ func (r DbResponse) Transform() ([]OurResponse, error) {
 		result = append(result, *transformed)
 	}
 	return result, nil
+}
+
+// The data for a single day
+type DaysData []OurResponse
+
+// Return an appropriate HTTP response from this dataset. If there is an error
+// while serializ, error)ing the data, an Internal Server Error (status 500) response
+// will be returned instead
+func (data DaysData) MakeResponse() *events.APIGatewayProxyResponse {
+	var (
+		buf = new(bytes.Buffer)
+		err = json.NewEncoder(buf).Encode(data)
+	)
+	if err != nil {
+		return InternalServerError("encoding JSON", err)
+	}
+	return &events.APIGatewayProxyResponse{
+		StatusCode: 200,
+		Body:       buf.String(),
+		Headers:    map[string]string{"Content-Type": "application/json"},
+	}
 }
