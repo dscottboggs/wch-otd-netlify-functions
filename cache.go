@@ -82,26 +82,3 @@ func (c cache) getDay(day *time.Time) (DaysData, error) {
 	err = json.NewDecoder(reader).Decode(&data)
 	return data, err
 }
-
-// Return the given day's cached data, or call fetchFunc to get it, caching the
-// result before returning it, serialized.
-func (c cache) getDayOr(
-	day *time.Time,
-	fetchFunc func(*time.Time) (DaysData, error),
-) (DaysData, error, error) {
-	result, err := c.getDay(day)
-	if err == redis.Nil {
-		// fetch from the database and cache the result
-		data, err := fetchFunc(day)
-		if err != nil {
-			return data, nil, err
-		}
-		r, err := c.setForDay(data, day)
-		return r, err, nil
-	} else if err != nil {
-		return nil, err, nil
-	} else {
-		// cache result found
-		return result, nil, nil
-	}
-}

@@ -19,6 +19,8 @@ import (
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/redis/go-redis/v9"
 )
 
 var BASEROW_API_KEY string
@@ -76,20 +78,43 @@ func fetchFromDB(date *time.Time) (DaysData, error) {
 	}
 }
 
-func FetchForDate(date time.Time, tz *time.Location) (DaysData, error, error) {
+func FetchForDate(date time.Time, tz *time.Location) (DaysData, string, error) {
 	if tz == nil {
 		tz = time.UTC
 	}
 	date = date.In(tz)
 	cache, err := connectToCache()
 	if err != nil {
-		result, err2 := fetchFromDB(&date)
-		return result, err, err2
+		log.Printf("error connecting to cache: %e", err)
+		result, err := fetchFromDB(&date)
+		return result, "cache failure", err
 	}
-	result, err := cache.getDayOr(&date, fetchFromDB)
-	return result, nil, err
+	result, err := cache.getDay(&date)
+	var warning string
+	switch err {
+	case nil:
+		return result, "", nil
+	case redis.Nil:
+		warning = "cache miss"
+	default:
+		log.Printf("error fetching data from cache: %e", err)
+		warning = "cache failure"
+	}
+	result, err = fetchFromDB(&date)
+	if err == nil {
+		result, err = cache.setForDay(result, &date)
+		if err != nil {
+			log.Printf("error storing data for %s in cache: %e", date.Format("%M-%D"), err)
+			if warning != "" {
+				warning += "; "
+			}
+			warning += "cache set failure"
+			err = nil
+		}
+	}
+	return result, warning, err
 }
 
-func FetchToday(tz *time.Location) (DaysData, error, error) {
+func FetchToday(tz *time.Location) (DaysData, string, error) {
 	return FetchForDate(time.Now(), tz)
 }
