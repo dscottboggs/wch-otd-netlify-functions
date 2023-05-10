@@ -153,10 +153,7 @@ func (r DbResponse) Transform() (DaysData, error) {
 	return result, nil
 }
 
-// Transform a single entry (rather than a whole day's entries) into an HTTP
-// response. If there is an error while serializing the data, an Internal Server
-// Error (status 500) response will be returned instead
-func (data OurResponse) MakeResponse() *events.APIGatewayProxyResponse {
+func makeResponse(data any) *events.APIGatewayProxyResponse {
 	var (
 		buf = new(bytes.Buffer)
 		err = json.NewEncoder(buf).Encode(data)
@@ -171,6 +168,13 @@ func (data OurResponse) MakeResponse() *events.APIGatewayProxyResponse {
 	}
 }
 
+// Transform a single entry (rather than a whole day's entries) into an HTTP
+// response. If there is an error while serializing the data, an Internal Server
+// Error (status 500) response will be returned instead
+func (data OurResponse) MakeResponse() *events.APIGatewayProxyResponse {
+	return makeResponse(data)
+}
+
 // The data for a single day
 type DaysData []OurResponse
 
@@ -178,16 +182,5 @@ type DaysData []OurResponse
 // while serializing the data, an Internal Server Error (status 500) response
 // will be returned instead
 func (data DaysData) MakeResponse() *events.APIGatewayProxyResponse {
-	var (
-		buf = new(bytes.Buffer)
-		err = json.NewEncoder(buf).Encode(data)
-	)
-	if err != nil {
-		return InternalServerError("encoding JSON", err)
-	}
-	return &events.APIGatewayProxyResponse{
-		StatusCode: 200,
-		Body:       buf.String(),
-		Headers:    map[string]string{"Content-Type": "application/json"},
-	}
+	return makeResponse(data)
 }
