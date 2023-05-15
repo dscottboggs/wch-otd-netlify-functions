@@ -132,46 +132,20 @@ Returned if the data can't be retrieved from either the cache or the database du
 <summary>Long JSON response example</summary>
 
 ```json
-[
+{
+  "title": "Ludlow Massacre",
+  "content": "<p>On 20 April 1914, the Ludlow massacre took place when US troops opened fire with machine guns on a camp of striking miners and their families in Ludlow, Colorado.</p> <p>12,000 miners had gone out on strike the previous September against the Rockefeller family-owned Colorado Fuel and Iron Corporation (CF&amp;I) following the killing of an activist of the United Mine Workers of America (UMWA). They then demanded better safety at work, and to be paid in money, instead of company scrip (tokens which could only be redeemed in the company store).</p> <p>The Rockefellers evicted the striking miners and their families from their homes, and so they set up \"tent cities\" to live in collectively, which miners' wives helped run. Company thugs harassed strikers, and occasionally drove by camps riddling them with machine-gun fire, killing and injuring workers and their children.</p> <p>Eventually, the national guard was ordered to evict all the strike encampments, and the morning of April 20 they attacked the largest camp in Ludlow. They opened fire with machine guns on the tents of the workers and their families, who then returned fire. The main organiser of the camp, Louis Tikas, went to visit the officer in charge of the national guard to arrange a truce. But he was beaten to the ground then shot repeatedly in the back, killing him. That night, troops entered the camp and set fire to it, killing 11 children and two women, in addition to 13 other people who were killed in the fighting. The youngest victim was Elvira Valdez, aged just 3 months.</p> <p>Protests against the massacre broke out across the country, but the workers at CF&amp;I were defeated, and many of them were subsequently sacked and replaced with non-union miners. Over the course of the strike 66 people were killed, but no guardsmen or company thugs were prosecuted.</p>",
+  "more_info": "",
+  "excerpt": "<p>On 20 April 1914, the Ludlow massacre took place when US troops opened fire with machine guns on a camp of striking miners and their families in Ludlow, Colorado.</p> <p>12,000 miners had gone out on strike the previous September against the Rockefeller family-owned Colorado Fuel and Iron Corporation (CF...</p>",
+  "author": "Working Class History",
+  "url": "https://stories.workingclasshistory.com/article/9243/ludlow-massacre",
+  "media":
   {
-    "title": "Ludlow Massacre",
-    "content": "<p>On 20 April 1914, the Ludlow massacre took place when US troops opened fire with machine guns on a camp of striking miners and their families in Ludlow, Colorado.</p> <p>12,000 miners had gone out on strike the previous September against the Rockefeller family-owned Colorado Fuel and Iron Corporation (CF&amp;I) following the killing of an activist of the United Mine Workers of America (UMWA). They then demanded better safety at work, and to be paid in money, instead of company scrip (tokens which could only be redeemed in the company store).</p> <p>The Rockefellers evicted the striking miners and their families from their homes, and so they set up \"tent cities\" to live in collectively, which miners' wives helped run. Company thugs harassed strikers, and occasionally drove by camps riddling them with machine-gun fire, killing and injuring workers and their children.</p> <p>Eventually, the national guard was ordered to evict all the strike encampments, and the morning of April 20 they attacked the largest camp in Ludlow. They opened fire with machine guns on the tents of the workers and their families, who then returned fire. The main organiser of the camp, Louis Tikas, went to visit the officer in charge of the national guard to arrange a truce. But he was beaten to the ground then shot repeatedly in the back, killing him. That night, troops entered the camp and set fire to it, killing 11 children and two women, in addition to 13 other people who were killed in the fighting. The youngest victim was Elvira Valdez, aged just 3 months.</p> <p>Protests against the massacre broke out across the country, but the workers at CF&amp;I were defeated, and many of them were subsequently sacked and replaced with non-union miners. Over the course of the strike 66 people were killed, but no guardsmen or company thugs were prosecuted.</p>",
-    "more_info": "",
-    "excerpt": "<p>On 20 April 1914, the Ludlow massacre took place when US troops opened fire with machine guns on a camp of striking miners and their families in Ludlow, Colorado.</p> <p>12,000 miners had gone out on strike the previous September against the Rockefeller family-owned Colorado Fuel and Iron Corporation (CF...</p>",
-    "author":
-    {
-      "name": "Working Class History",
-      "url": "https://workingclasshistory.com",
-      "email": ""
-    },
-    "url": "https://stories.workingclasshistory.com/article/9243/ludlow-massacre",
-    "media":
-    {
-      "url": "https://workingclasshistory.com/wp-content/uploads/2023/02/04.20-x-Ludlow_striker_family_in_front_of_tent.jpg",
-      "credit": "Denver Library/Wikimedia Commons",
-      "caption": "Striking miners wives and children in the strikers' tent camp, 1914"
-    }
-  },
-  {
-    "title": "Limerick youth clashes",
-    "content": "On 20 April 1919, 1,000 youths confronted soldiers in one of the major flashpoints of the Limerick Soviet in Ireland. The Limerick Trades and Labour Council had become a strike committee, and it was effectively running the city during a general strike against the imposition of an onerous pass system by the British military. \nIn addition to printing their own currency (pictured), they established an amusement committee that reopened the cinema, diverting profits to the strike fund. They also printed posters advertising a hurling match at Caherdavin, a suburb that lay across the River Shannon and outside the restricted zone. \nAfter the match, 1,000 youths approached the army check point on Sarsfield Bridge, without the permits that permitted their re-entry to Limerick. A sentry fired warning shots and his colleagues scrambled from inside the Shannon Rowing Club where they were billeted. An armoured car and whippet tank blocked the bridge and a machine gun was readied on the upper storey of the Rowing Club. \nBloodshed was avoided when the youths retreated from the restricted area and organised a concert and dance at St Munchin’s Temperance Hall.",
-    "more_info": "",
-    "excerpt": "On 20 April 1919, 1,000 youths confronted soldiers in one of the major flashpoints of the Limerick Soviet in Ireland. The Limerick Trades and Labour Council had become a strike committee, and it was effectively running the city during a general strike against the imposition of an onerous pass syste...",
-    "author":
-    {
-      "name": "D.D. Johnston",
-      "url": "",
-      "email": ""
-    },
-    "url": "https://stories.workingclasshistory.com/article/9245/limerick-youth-clashes",
-    "media":
-    {
-      "url": "https://workingclasshistory.com/wp-content/uploads/2022/07/04.20-Limerick-Soviet-currency-green-fair-use.jpg",
-      "credit": "The Workers of Limerick",
-      "caption": "A banknote issued by the Limerick Soviet."
-    }
+    "url": "https://workingclasshistory.com/wp-content/uploads/2023/02/04.20-x-Ludlow_striker_family_in_front_of_tent.jpg",
+    "credit": "Denver Library/Wikimedia Commons",
+    "caption": "Striking miners wives and children in the strikers' tent camp, 1914"
   }
-]
+}
 ```
 </details>
 
