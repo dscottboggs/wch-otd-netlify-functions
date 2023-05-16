@@ -2,6 +2,20 @@
 This repository contains the code which is shared by all WCH OtD app netlify
 functions. The exposed functions are in [`fetch.go`](/fetch.go).
 
+## Expected uses
+This API is intended to be used as an alternative to the [On This Day iframe
+embed](https://workingclasshistory.com/blog/embed-wch-on-this-day-in-history-to-your-website-easily/).
+Rather than embedding an iframe into your app or web site, you can query this
+API, and then embed the results into your app or site, using your own
+stylesheets and layout. However, we have some expectations regarding how this
+API will be used.
+
+ - Please include only the excerpt portion of the story, not the full content.
+ - You must link to the full story.
+
+Please feel free to contact us at info@workingclasshistory.com if you have any
+questions about using this API.
+
 ## API Reference
 The API can be queried at endpoints under `https://stories.workingclasshistory.com/api/{API version}/`
 
@@ -9,7 +23,11 @@ The API can be queried at endpoints under `https://stories.workingclasshistory.c
 A JSON-encoded list of events from our _On This Day in Working Class History_ series.
 
 #### Query parameter
-The `tz` query parameter can be specified, like `/api/v1/today?tz=America/New_York`. When the `tz` parameter is present, the results should be returned for the current day _in that time zone_, since it won't always be the same day in all time zones. **If `tz` is _not_ specified, results are returned for the `UTC` time zone**.
+The `tz` query parameter can be specified, like `/api/v1/today?tz=America/New_York`.
+When the `tz` parameter is present, the results should be returned for the
+current day _in that time zone_, since it won't always be the same day in all
+time zones. **If `tz` is _not_ specified, results are returned for the `UTC` time zone**.
+
 #### Possible Responses
 ##### `200 OK`
 ###### Headers
