@@ -19,6 +19,8 @@ questions about using this API.
 ## API Reference
 The API can be queried at endpoints under `https://stories.workingclasshistory.com/api/{API version}/`
 
+You may also find it helpful to review the [examples](/example/)
+
 ### `GET /api/v1/today`
 A JSON-encoded list of events from our _On This Day in Working Class History_ series.
 
