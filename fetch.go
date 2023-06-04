@@ -19,6 +19,8 @@ import (
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/redis/go-redis/v9"
 )
 
 var BASEROW_API_KEY string
@@ -36,7 +38,7 @@ func init() {
 		log.Fatalln("REACT_APP_BASEROW_TOKEN environment variable not found")
 	}
 }
-func makeUrl(date time.Time) *url.URL {
+func makeUrl(date *time.Time) *url.URL {
 	query := url.Values{}
 	query.Set("filter__field_177140__equal", strconv.Itoa(date.Day()))
 	query.Set("filter__field_177139__equal", strconv.Itoa(int(date.Month())))
@@ -47,11 +49,7 @@ func makeUrl(date time.Time) *url.URL {
 	return it
 }
 
-func FetchForDate(date time.Time, tz *time.Location) ([]OurResponse, error) {
-	if tz == nil {
-		tz = time.UTC
-	}
-	date = date.In(tz)
+func fetchFromDB(date *time.Time) (DaysData, error) {
 	headers := http.Header{}
 	headers.Set("Authorization", fmt.Sprintf("Token %s", BASEROW_API_KEY))
 	headers.Set("Accept", "application/json")
@@ -80,6 +78,43 @@ func FetchForDate(date time.Time, tz *time.Location) ([]OurResponse, error) {
 	}
 }
 
-func FetchToday(tz *time.Location) ([]OurResponse, error) {
+func FetchForDate(date time.Time, tz *time.Location) (DaysData, string, error) {
+	if tz == nil {
+		tz = time.UTC
+	}
+	date = date.In(tz)
+	cache, err := connectToCache()
+	if err != nil {
+		log.Printf("error connecting to cache: %e", err)
+		result, err := fetchFromDB(&date)
+		return result, "cache failure", err
+	}
+	result, err := cache.getDay(&date)
+	var warning string
+	switch err {
+	case nil:
+		return result, "", nil
+	case redis.Nil:
+		warning = "cache miss"
+	default:
+		log.Printf("error fetching data from cache: %e", err)
+		warning = "cache failure"
+	}
+	result, err = fetchFromDB(&date)
+	if err == nil {
+		result, err = cache.setForDay(result, &date)
+		if err != nil {
+			log.Printf("error storing data for %s in cache: %e", date.Format("%M-%D"), err)
+			if warning != "" {
+				warning += "; "
+			}
+			warning += "cache set failure"
+			err = nil
+		}
+	}
+	return result, warning, err
+}
+
+func FetchToday(tz *time.Location) (DaysData, string, error) {
 	return FetchForDate(time.Now(), tz)
 }

@@ -10,13 +10,27 @@
 package wch_otd_api
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 
 	"github.com/aws/aws-lambda-go/events"
 )
 
 func BadRequest(message string) *events.APIGatewayProxyResponse {
-	return &events.APIGatewayProxyResponse{StatusCode: 400, Body: message}
+	responseData := struct {
+		E string `json:"error"`
+	}{E: message}
+	buf := new(bytes.Buffer)
+	err := json.NewEncoder(buf).Encode(responseData)
+	if err != nil {
+		return InternalServerError("failed to json-encode response for bad request", err)
+	}
+	return &events.APIGatewayProxyResponse{
+		StatusCode: 400,
+		Headers:    map[string]string{"Content-Type": "application/json"},
+		Body:       buf.String(),
+	}
 }
 
 /**
@@ -29,6 +43,7 @@ func InternalServerError(message string, err error) *events.APIGatewayProxyRespo
 	fmt.Printf("error %s: %v\n", message, err)
 	return &events.APIGatewayProxyResponse{
 		StatusCode: 500,
+		Headers:    map[string]string{"Content-Type": "application/json"},
 		Body:       `{"error": "internal server error"}`,
 	}
 }
