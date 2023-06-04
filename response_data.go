@@ -161,10 +161,12 @@ func makeResponse(data any) *events.APIGatewayProxyResponse {
 	if err != nil {
 		return InternalServerError("encoding JSON", err)
 	}
+	headers := CORSHeaders()
+	headers["Content-Type"] = "application/json"
 	return &events.APIGatewayProxyResponse{
 		StatusCode: 200,
 		Body:       buf.String(),
-		Headers:    map[string]string{"Content-Type": "application/json"},
+		Headers:    headers
 	}
 }
 
