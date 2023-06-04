@@ -166,7 +166,7 @@ func makeResponse(data any) *events.APIGatewayProxyResponse {
 	return &events.APIGatewayProxyResponse{
 		StatusCode: 200,
 		Body:       buf.String(),
-		Headers:    headers
+		Headers:    headers,
 	}
 }
 
